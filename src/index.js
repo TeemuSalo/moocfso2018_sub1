@@ -1,62 +1,57 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 
-const App = () => {
-    const kurssi = {
-        nimi: 'Half Stack -sovelluskehitys',
-        osat: [
-            {
-                nimi: 'Reactin perusteet',
-                tehtavia: 10
-            },
-            {
-                nimi: 'Tiedonvälitys propseilla',
-                tehtavia: 7
-            },
-            {
-                nimi: 'Komponenttien tila',
-                tehtavia: 14
-            }
-        ]
-      }
-
-    const Otsikko = (props) => {
-        return(
-            <h1>{props.kurssi}</h1>
-        )
+class App extends React.Component {
+    constructor() {
+        super()
+        this.state = {
+            good: 0,
+            neutral: 0,
+            bad: 0
+        }
     }
 
-    const Sisalto = (props) => {
-        return(
+    // herkkuja: computed property, previous state
+    // Prev Staten avulla uutta arvoa ei tarvitse argumenttina ja
+    // huolehtii myös mahdollisesta data racesta
+    handleClick = (stateProp) => () => {
+        this.setState((prevState) => ({
+            [stateProp]: prevState[stateProp] + 1 
+        }));
+    }
+
+    render(){
+
+        // Button pitää luoda renderissä, class property ei voi olla react component(?)
+        // callback ei tarvitse argumentteja sillä render() palauttaa funktion,
+        // jossa argumentit on valmiiksi kutsuttu
+        const Button = ({ text, callback }) => {
+            return(
+                <button onClick={callback}>
+                    {text}
+                </button>
+            )
+        }
+
+        // Perusta viela nama componentit
+        // Statistics huolehtii tilastojen näyttämisestä
+        // Statistic huolehtii yksittäisen tilastorivin, esim. keskiarvon näyttämisesta
+
+        return (
             <div>
-                <Osa osa = {props.osat[0].nimi} teht = {props.osat[0].tehtavia}/>
-                <Osa osa = {props.osat[1].nimi} teht = {props.osat[1].tehtavia}/>
-                <Osa osa = {props.osat[2].nimi} teht = {props.osat[2].tehtavia}/>
+                <h1>Anna Palautetta!</h1>
+                
+                <Button text='hyvä' callback={this.handleClick('good')} />
+                <Button text='neutraali' callback={this.handleClick('neutral')} />
+                <Button text='huono' callback={this.handleClick('bad')} />
+
+                <h2>statistiikka</h2>
+                <p>hyvä {this.state.good}</p>
+                <p>neutraali {this.state.neutral}</p>
+                <p>huono {this.state.bad}</p>
             </div>
         )
     }
-
-    const Osa = (props) => {
-        return(
-            <p>{props.osa} {props.teht}</p>
-        )
-    }
-
-    const Yhteensa = (props) => {
-        return(
-            // Teki mieli käyttää reduce() mutta tehään vielä näin
-            <p>Yhteensä {props.osat[0].tehtavia + props.osat[1].tehtavia + props.osat[2].tehtavia }</p>
-        )
-    }
-
-    return (
-
-        <div>
-            <Otsikko kurssi= {kurssi.nimi} />
-            <Sisalto osat = {kurssi.osat} />
-            <Yhteensa osat = {kurssi.osat} />
-        </div>
-    )
 }
 
 ReactDOM.render(
